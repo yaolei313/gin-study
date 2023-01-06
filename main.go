@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/yaolei313/gin-study/internal/note"
 	"io"
 	"net/http"
 	"os"
@@ -46,7 +47,7 @@ func main() {
 
 	// However, this one will match /user/john/ and also /user/john/send
 	// If no other routers match /user/john, it will redirect to /user/john/
-	// : *都是参数匹配，有什么区别？*会包含前面的/。整体认为iris的写法更友好
+	// : *都是参数匹配，有什么区别？*会包含前面的/字符。
 	r.GET("/user/:name/*action", func(c *gin.Context) {
 		name := c.Param("name")
 		action := c.Param("action")
@@ -59,14 +60,24 @@ func main() {
 		panic("test panic")
 	})
 
+	registerDraftRouting(r)
+
+
 	// by default, it serves on :8080 unless a PORT environment variable was defined.
 	r.Run()
 }
 
-func RegisterRouting(r *gin.RouterGroup) {
-	v1 := r.Group("/oauth2/")
+func RegisterLoginRouting(r *gin.Engine) {
+	v1 := r.Group("/user/passport/")
 	{
-		v1.POST("/token")
+		v1.POST("/login_by_password", )
 	}
+}
 
+func registerDraftRouting(r *gin.Engine) {
+	draftGroup := r.Group("/note/draft")
+
+	draftGroup.GET("/:id", note.GetDraft)
+	draftGroup.POST("/save", note.SaveDraft)
+	draftGroup.POST("/del", note.DeleteDraft)
 }
